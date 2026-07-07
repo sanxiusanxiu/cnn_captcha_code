@@ -51,7 +51,7 @@ def main(mode, count):
     print(f'完成！共生成 {count} 张验证码到 {save_path}')
 
 def generate_captcha_temp():
-    """临时生成一些小批量图形验证码"""
+    """临时生成小批量的图形验证码"""
     temp_path = 'dataset/temp/'
     os.makedirs(temp_path, exist_ok=True)
     for i in range(300):

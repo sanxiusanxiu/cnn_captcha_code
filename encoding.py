@@ -31,6 +31,16 @@ def decode(vec):
         chars.append(idx_to_char[idx])
     return ''.join(chars)
 
+"""
+# decode_predict(outputs)：模型输出是连续概率值（0~1 的小数）
+#   内部：每 36 个一组，找概率最大的那个 → 字符
+#   例：[0.01, 0.02, ..., 0.92, ..., 0.005] → 索引 11 → 'B'
+#
+# decode(labels)：标签是 One-Hot 编码（一个 1，其余全是 0）
+#   内部：每 36 个一组，找值为 1 的那个 → 字符
+#   例：[0, 0, ..., 1, ..., 0] → 索引 11 → 'B'
+"""
+
 def decode_predict(output_vec):
     """从模型输出的 144 维概率向量解码为字符串（无需 One-Hot，直接取每段 argmax）"""
     chars = []
