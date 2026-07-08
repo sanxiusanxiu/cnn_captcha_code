@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+
 from setting import *
 
 # 创建 字符-索引 映射表
@@ -38,7 +40,7 @@ def decode(vector):
         end = (i + 1) * ALL_CHAR_SET_LEN
         segment = vector[start: end]
         # 找到值为 1 的位置（在这个稀疏矩阵中最大值就是 1）
-        index = np.argmax(segment)
+        index = torch.argmax(segment).item()
         chars.append(index_to_char[index])
     return ''.join(chars)
 
@@ -53,6 +55,9 @@ def decode_predict(output_vector):
         start = i * ALL_CHAR_SET_LEN
         end = (i + 1) * ALL_CHAR_SET_LEN
         segment = output_vector[start: end]
-        index = np.argmax(segment)
+        # index = np.argmax(segment)
+        # 使用 torch.argmax 替代 np.argmax，并用 .item() 提取为纯 Python int
+        index = torch.argmax(segment).item()
         chars.append(index_to_char[index])
     return ''.join(chars)
+

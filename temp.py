@@ -1,3 +1,5 @@
+import torch
+
 # 测试编码解码是否生效
 def test_encoding():
     from encoding import encode, decode
@@ -7,5 +9,10 @@ def test_encoding():
 
 
 if __name__ == '__main__':
-    test_encoding()
+    # test_encoding()
+    # !nvidia-smi
+    # CUDA Version: 13.2
+    # !pip install torch torchvision --index-url https://download.pytorch.org/whl/cu132
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'正在使用设备：{device}')
 

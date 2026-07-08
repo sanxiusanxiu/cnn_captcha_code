@@ -1,6 +1,6 @@
+import os
 import torch
 from torch import nn
-
 from model import CaptchaCNN
 from dataset import *
 
@@ -8,8 +8,10 @@ from dataset import *
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'正在使用设备：{device}')
 
+os.mkdir('model')
+
 # 超参数
-num_epochs = 3
+num_epochs = 30
 
 def evaluate_model(model, eval_loader):
     model = model.to(device)

@@ -9,7 +9,7 @@ import os
 def main():
     # 第1步：加载模型
     model = CaptchaCNN()
-    model.load_state_dict(torch.load('model/best_model.pkl'))
+    model.load_state_dict(torch.load('model/model.pkl'))
     model.eval()
 
     # 第2步：定义图片预处理流水线
@@ -32,9 +32,10 @@ def main():
             # .squeeze(0) 去掉 batch 维度: (144,)
             # decode_predict：144 维概率向量 → 4 位字符串
             outputs = model(img_tensor).squeeze(0)
-            pred_text = decode_predict(outputs)
+            # print(outputs)
+            predict_text = decode_predict(outputs)
 
-        print(f'{file_name} → 预测结果: {pred_text}')
+        print(f'{file_name} → 预测结果: {predict_text}')
 
 if __name__ == '__main__':
     main()
