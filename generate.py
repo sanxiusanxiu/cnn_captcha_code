@@ -30,7 +30,7 @@ def generate_data(mode, count):
         # 随机生成图形验证码的文本
         captcha_text = ''
         for j in range(MAX_CAPTCHA):
-            c = random.choice(ALL_CHAR_SET)
+            c = random.choice(ALL_CHAR_LIST)
             captcha_text += c
         # print(f"本次产生的文本为：{captcha_text}")
         # 生成图形验证码
@@ -44,6 +44,7 @@ def generate_data(mode, count):
         # 加一个打印进度
         if i % 1000 == 0:
             print(f"已生成 {i} 张图形验证码")
-    print(f"{mode} 图形验证码，共 {count} 张已生成！")
+    print(f"模式 {mode} 图形验证码，共 {count} 张已生成！")
 
-generate_data('train', 100000)
+# 运行前记得修改参数
+generate_data('predict', 300)

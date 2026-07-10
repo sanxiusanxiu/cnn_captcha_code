@@ -69,7 +69,7 @@ class CaptchaCNN(nn.Module):
             # MAX_CAPTCHA * ALL_CHAR_SET_LEN = 4 × 36 = 144
             # 输出 144 个数字，对应 4 个字符位置各自的 36 种字符概率
             # 例如前 36 个数字是第 1 个字符的概率分布，接下来 36 个是第 2 个，依此类推
-            nn.Linear(in_features=1024, out_features=MAX_CAPTCHA * ALL_CHAR_SET_LEN),
+            nn.Linear(in_features=1024, out_features=MAX_CAPTCHA * ALL_CHAR_LIST_LEN),
         )
 
     def forward(self, x):

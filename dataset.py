@@ -48,7 +48,7 @@ class CaptchaDataset(Dataset):
         # 第6步：返回 (图片, 标签) 元组
         return image, label
 
-# transform 是一条流水线，定义在文件末尾的全局变量里：
+# transform 是一条流水线，定义在文件下方的全局变量里：
 # Grayscale(num_output_channels=1)  → RGB转灰度（3通道→1通道）
 # ToTensor()                        → PIL Image转Tensor + 像素值缩放到[0,1]
 transform = transforms.Compose([
