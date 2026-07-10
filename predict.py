@@ -6,7 +6,7 @@ from encoding import decode_predict, decode
 def main():
     # 第1步：加载模型
     model = CaptchaCNN()
-    model.load_state_dict(torch.load('model/model.pkl'))
+    model.load_state_dict(torch.load('model/best_model.pkl'))
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'正在使用设备：{device}')
     model = model.to(device)

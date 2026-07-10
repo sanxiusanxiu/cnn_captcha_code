@@ -52,6 +52,8 @@ class CaptchaDataset(Dataset):
 # Grayscale(num_output_channels=1)  → RGB转灰度（3通道→1通道）
 # ToTensor()                        → PIL Image转Tensor + 像素值缩放到[0,1]
 transform = transforms.Compose([
+    # 测试网站实际是 112*38 的图形验证码，所以添加一个拉伸
+    transforms.Resize((IMAGE_HEIGHT, IMAGE_WIDTH)),
     Grayscale(1),
     ToTensor(),
 ])
