@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 验证码演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .input-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 150px;
+        }
+        button {
+            padding: 8px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .tip {
+            margin-top: 15px;
+            color: #666;
+            font-size: 12px;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <h2>Canvas 验证码演示</h2>
+        <p>点击验证码图片可刷新</p>
+
+        <canvas id="captcha" width="160" height="60"></canvas>
+
+        <div class="input-group">
+            <input type="text" id="captchaInput" placeholder="输入验证码" maxlength="4">
+            <button onclick="verify()">验证</button>
+        </div>
+
+        <div class="result" id="result"></div>
+        <div class="tip">当前验证码: <span id="codeDisplay" style="color:#e74c3c;"></span></div>
+    </div>
+
+    <script>
+        // 字符集
+        const CHAR_SET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let currentCode = '';
+
+        /**
+         * 生成随机颜色
+         */
+        function randomColor(min = 0, max = 255) {
+            const r = Math.floor(Math.random() * (max - min) + min);
+            const g = Math.floor(Math.random() * (max - min) + min);
+            const b = Math.floor(Math.random() * (max - min) + min);
+            return `rgb(${r},${g},${b})`;
+        }
+
+        /**
+         * 生成随机验证码文本
+         */
+        function generateCode(length = 4) {
+            let code = '';
+            for (let i = 0; i < length; i++) {
+                code += CHAR_SET[Math.floor(Math.random() * CHAR_SET.length)];
+            }
+            return code;
+        }
+
+        /**
+         * 绘制验证码到 canvas
+         */
+        function drawCaptcha() {
+            const canvas = document.getElementById('captcha');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // 1. 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 2. 填充背景色（随机浅色）
+            ctx.fillStyle = '#f8f8f8';
+            ctx.fillRect(0, 0, width, height);
+
+            // 3. 绘制干扰线（随机贝塞尔曲线）
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * width, Math.random() * height);
+                ctx.bezierCurveTo(
+                    Math.random() * width, Math.random() * height,
+                    Math.random() * width, Math.random() * height,
+                    Math.random() * width, Math.random() * height
+                );
+                ctx.strokeStyle = randomColor(100, 200);
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // 4. 绘制干扰点（随机噪点）
+            for (let i = 0; i < 150; i++) {
+                ctx.fillStyle = randomColor(50, 200);
+                ctx.fillRect(
+                    Math.random() * width,
+                    Math.random() * height,
+                    1 + Math.random() * 2,
+                    1 + Math.random() * 2
+                );
+            }
+
+            // 5. 生成验证码字符
+            currentCode = generateCode(4);
+            document.getElementById('codeDisplay').textContent = currentCode;
+
+            // 6. 绘制验证码字符（逐个绘制，各自独立变换）
+            for (let i = 0; i < currentCode.length; i++) {
+                ctx.save();
+
+                // 计算位置：均匀分布 + 随机偏移
+                const baseX = 25 + i * 35;
+                const baseY = 40;
+                const offsetX = (Math.random() - 0.5) * 10;
+                const offsetY = (Math.random() - 0.5) * 10;
+                const x = baseX + offsetX;
+                const y = baseY + offsetY;
+
+                // 随机旋转角度（±25度）
+                const angle = (Math.random() - 0.5) * 0.9;
+
+                // 随机字体大小
+                const fontSize = 28 + Math.random() * 8;
+
+                // 随机颜色（深色，确保可读性）
+                ctx.fillStyle = randomColor(20, 120);
+
+                // 设置字体
+                ctx.font = `bold ${fontSize}px Arial`;
+                ctx.textBaseline = 'middle';
+
+                // 应用变换
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                // 绘制字符
+                ctx.fillText(currentCode[i], 0, 0);
+
+                ctx.restore();
+            }
+        }
+
+        /**
+         * 验证输入
+         */
+        function verify() {
+            const input = document.getElementById('captchaInput').value.toUpperCase();
+            const resultDiv = document.getElementById('result');
+
+            if (input === currentCode) {
+                resultDiv.textContent = '✓ 验证成功！';
+                resultDiv.style.color = '#4CAF50';
+            } else {
+                resultDiv.textContent = '✗ 验证失败，请重试';
+                resultDiv.style.color = '#e74c3c';
+                // 刷新验证码
+                drawCaptcha();
+                document.getElementById('captchaInput').value = '';
+            }
+        }
+
+        // 点击 canvas 刷新验证码
+        document.getElementById('captcha').addEventListener('click', drawCaptcha);
+
+        // 页面加载时绘制第一个验证码
+        drawCaptcha();
+    </script>
+</body>
+</html>
